@@ -12,7 +12,6 @@ from werkzeug.security import generate_password_hash, check_password_hash
 # Import your forms from the forms.py
 from forms import CreatePostForm, RegisterForm, LoginForm, CommentForm
 from email.mime.text import MIMEText
-from dotenv import load_dotenv
 from smtplib import SMTP_SSL
 import os
 
@@ -51,8 +50,8 @@ db.init_app(app)
 
 # CONFIGURE TABLES
 
-#  Create a User table for all your registered users.
-# configures Use table
+#  Create a User table for all  registered users.
+# configures User table
 class User(UserMixin, db.Model):
     # Gives the class it table name
     __tablename__ = "users"
