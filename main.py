@@ -22,8 +22,7 @@ app.config['SECRET_KEY'] = os.getenv("FLASK_SECRET_KEY")
 ckeditor = CKEditor(app)
 Bootstrap5(app)
 
-# loads environment variables into script
-load_dotenv()
+
 
 # Configure Flask-Login
 
