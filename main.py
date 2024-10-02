@@ -19,11 +19,11 @@ import os
 
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = '8BYkEfBA6O6donzWlSihBXox7C0sKR6b'
+app.config['SECRET_KEY'] = os.getenv("FLASK_SECRET_KEY")
 ckeditor = CKEditor(app)
 Bootstrap5(app)
 
-# loods environmet variables into script
+# loads environment variables into script
 load_dotenv()
 
 # Configure Flask-Login
@@ -42,7 +42,7 @@ def load_user(user_id):
 # CREATE DATABASE
 class Base(DeclarativeBase):
     pass
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///blog.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("DB_URI", "sqlite:///posts.db")
 
 
 db = SQLAlchemy(model_class=Base)
@@ -108,6 +108,7 @@ class Comment(db.Model):
     post: Mapped["BlogPost"] = relationship(back_populates="comments")
 
     text: Mapped[str] = mapped_column(Text, nullable=False)
+
 
 def send_email(name, email, phone_number, message):
     """Sends the message written by the User on the contact form to my email via the companies email"""
@@ -327,8 +328,6 @@ def about():
 def contact():
     message_sent = False
     if request.method == "POST":
-        # if user makes a post request to the contact page initializes the SendEmail class and passes the information to
-        # the method called from the object
         name = request.form["name"]
         email = request.form["email"]
         phone_number = request.form["phone"]
@@ -345,15 +344,16 @@ def contact():
 @app.route("/delete_comment")
 @commentors
 def delete_comment():
-    """ Allows a user who posted a comment to delete the comment"""
+    """ Allows a user who posted a comment to delete it"""
     user_comment = request.args.get("user_comment")
     blog_id = request.args.get("blog_id")
     delete_comment = db.get_or_404(Comment, user_comment)
     db.session.delete(delete_comment)
     db.session.commit()
+
     return redirect(url_for("show_post", post_id=blog_id))
 
 
 
 if __name__ == "__main__":
-    app.run(debug=True, port=5002)
+    app.run(debug=False)
